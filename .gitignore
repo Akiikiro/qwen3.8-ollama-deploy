@@ -1,0 +1,16 @@
+# Local configuration
+config.ps1
+
+# Managed process state and logs
+.ollama-server-*.pid
+logs/
+
+# Downloaded and incomplete model artifacts
+models/
+ollama-models/
+*.gguf
+*.gguf.part
+*.part
+
+# Install-time generated Modelfiles
+.Modelfile.*.generated

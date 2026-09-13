@@ -1,0 +1,4 @@
+FROM qwen3.8-27b-iq3s
+
+PARAMETER num_ctx 98304
+PARAMETER num_predict 7168
