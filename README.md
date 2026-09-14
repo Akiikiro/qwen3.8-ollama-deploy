@@ -75,13 +75,43 @@ Verify the 96K tag with:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\verify.ps1 -Context 96k
 ```
 
+The one-click installer supports the 96K and 128K profiles. After the base model has been installed, `create-context-models.ps1` can create the full profile set on the isolated server:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\create-context-models.ps1
+```
+
+| Profile | Model tag | `num_ctx` |
+| --- | --- | ---: |
+| 40K | `qwen3.8-27b-iq3s-40k` | 40,960 |
+| 48K | `qwen3.8-27b-iq3s-48k` | 49,152 |
+| 64K | `qwen3.8-27b-iq3s-64k` | 65,536 |
+| 96K | `qwen3.8-27b-iq3s-96k` | 98,304 |
+| 128K | `qwen3.8-27b-iq3s-128k` | 131,072 |
+| 130K | `qwen3.8-27b-iq3s-130k` | 133,120 |
+| 132K | `qwen3.8-27b-iq3s-132k` | 135,168 |
+| 134K | `qwen3.8-27b-iq3s-134k` | 137,216 |
+| 144K | `qwen3.8-27b-iq3s-144k` | 147,456 |
+| 160K | `qwen3.8-27b-iq3s-160k` | 163,840 |
+| 192K | `qwen3.8-27b-iq3s-192k` | 196,608 |
+| 224K | `qwen3.8-27b-iq3s-224k` | 229,376 |
+| 256K | `qwen3.8-27b-iq3s-256k` | 262,144 |
+
+To check how a profile actually loads, pass its model tag to `check-ollama-model.ps1`:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\check-ollama-model.ps1 qwen3.8-27b-iq3s-128k
+```
+
+The check unloads the model, triggers a clean non-thinking generation, and inspects only the new isolated-server log entries. It reports the loaded context, full or partial GPU layer offload, CUDA and host model buffers, CPU/CUDA KV-cache placement, K/V cache types with an explicit q4_0 result, Flash Attention detection, GPU memory planning, and runner size/VRAM. These results depend on the log format emitted by the installed Ollama version; missing evidence is reported as not found, not confirmed, or unknown.
+
 The start script records the PID it launches and refuses to start a duplicate server. The stop script stops only that recorded Ollama process when its identity can be confirmed. It does not kill every Ollama process on the machine.
 
 Managed server output is written to `logs/ollama-<port>.stdout.log` and `logs/ollama-<port>.stderr.log`. These local runtime files are excluded from Git.
 
 ## Use the isolated deployment
 
-Point the Ollama CLI at the deployment-specific server in each new PowerShell session:
+After `start-ollama.ps1` starts the isolated server on port 11435, point commands in the current PowerShell session at that server with:
 
 ```powershell
 $env:OLLAMA_HOST="127.0.0.1:11435"
